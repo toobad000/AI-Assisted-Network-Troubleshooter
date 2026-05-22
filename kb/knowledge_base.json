@@ -1,0 +1,3601 @@
+{
+  "rules": {
+    "INT_001": {
+      "id": "INT_001",
+      "condition": {
+        "problem_type": "shutdown",
+        "category": "interface",
+        "symptoms": [
+          "administratively down",
+          "should_be_up"
+        ]
+      },
+      "action": {
+        "fix_type": "no_shutdown",
+        "commands": [
+          "interface {interface}",
+          "no shutdown",
+          "end"
+        ],
+        "verification": "show ip interface brief",
+        "description": "Bring interface up with no shutdown"
+      },
+      "confidence": 0.97342795,
+      "category": "interface",
+      "topology_dependent": false,
+      "created": "2026-02-21T00:51:51.832429",
+      "last_updated": "2026-03-29T20:17:26.608875"
+    },
+    "INT_002": {
+      "id": "INT_002",
+      "condition": {
+        "problem_type": "ip address mismatch",
+        "category": "interface",
+        "symptoms": [
+          "current_ip",
+          "expected_ip"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_ip",
+        "commands": [
+          "interface {interface}",
+          "ip address {expected_ip} {expected_mask}",
+          "end"
+        ],
+        "verification": "show ip interface brief",
+        "description": "Configure correct IP address"
+      },
+      "confidence": 0.9,
+      "category": "interface",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832435"
+    },
+    "INT_003": {
+      "id": "INT_003",
+      "condition": {
+        "problem_type": "missing ip address",
+        "category": "interface",
+        "symptoms": [
+          "expected_ip",
+          "expected_mask"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_ip",
+        "commands": [
+          "interface {interface}",
+          "ip address {expected_ip} {expected_mask}",
+          "end"
+        ],
+        "verification": "show ip interface brief",
+        "description": "Add missing IP address configuration"
+      },
+      "confidence": 0.9,
+      "category": "interface",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832436"
+    },
+    "EIGRP_001": {
+      "id": "EIGRP_001",
+      "condition": {
+        "problem_type": "as mismatch",
+        "category": "eigrp",
+        "symptoms": [
+          "current",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "revert_to_baseline",
+        "commands": [
+          "# Revert to stable configuration"
+        ],
+        "verification": "show ip eigrp neighbors",
+        "description": "AS mismatch requires reverting to baseline configuration",
+        "requires_manual": true
+      },
+      "confidence": 0.95,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832438"
+    },
+    "EIGRP_002": {
+      "id": "EIGRP_002",
+      "condition": {
+        "problem_type": "k-value mismatch",
+        "category": "eigrp",
+        "symptoms": [
+          "values",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_k_values",
+        "commands": [
+          "router eigrp {as_number}",
+          "metric weights {expected}",
+          "end"
+        ],
+        "verification": "show ip eigrp topology",
+        "description": "Reset EIGRP metric weights to default"
+      },
+      "confidence": 0.85,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832439"
+    },
+    "EIGRP_002B": {
+      "id": "EIGRP_002B",
+      "condition": {
+        "problem_type": "non-default k-values",
+        "category": "eigrp",
+        "symptoms": [
+          "values",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_k_values",
+        "commands": [
+          "router eigrp {as_number}",
+          "metric weights {expected}",
+          "end"
+        ],
+        "verification": "show ip eigrp topology",
+        "description": "Reset EIGRP metric weights to default"
+      },
+      "confidence": 0.99,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832440",
+      "last_updated": "2026-04-07T16:48:20.322825"
+    },
+    "EIGRP_003": {
+      "id": "EIGRP_003",
+      "condition": {
+        "problem_type": "eigrp hello timer mismatch",
+        "category": "eigrp",
+        "symptoms": [
+          "interface",
+          "current",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_timers",
+        "commands": [
+          "interface {interface}",
+          "ip hello-interval eigrp {as_number} {expected_hello}",
+          "ip hold-time eigrp {as_number} {expected_hold}",
+          "end"
+        ],
+        "verification": "show ip eigrp interfaces detail {interface}",
+        "description": "Adjust EIGRP timers to match baseline"
+      },
+      "confidence": 0.85,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832441"
+    },
+    "EIGRP_003B": {
+      "id": "EIGRP_003B",
+      "condition": {
+        "problem_type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "symptoms": [
+          "interface",
+          "current_hello",
+          "expected_hello"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_timers",
+        "commands": [
+          "interface {interface}",
+          "ip hello-interval eigrp {as_number} {expected_hello}",
+          "ip hold-time eigrp {as_number} {expected_hold}",
+          "end"
+        ],
+        "verification": "show ip eigrp interfaces detail {interface}",
+        "description": "Adjust EIGRP timers to match baseline"
+      },
+      "confidence": 0.94188692665,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832442",
+      "last_updated": "2026-03-29T20:17:26.616264"
+    },
+    "EIGRP_004": {
+      "id": "EIGRP_004",
+      "condition": {
+        "problem_type": "stub configuration",
+        "category": "eigrp",
+        "symptoms": [
+          "should_be_stub"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_stub",
+        "commands": [
+          "router eigrp {as_number}",
+          "no eigrp stub",
+          "end"
+        ],
+        "verification": "show ip protocols",
+        "description": "Remove incorrect stub configuration"
+      },
+      "confidence": 0.99,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832443",
+      "last_updated": "2026-04-07T16:48:20.323610"
+    },
+    "EIGRP_005": {
+      "id": "EIGRP_005",
+      "condition": {
+        "problem_type": "passive interface",
+        "category": "eigrp",
+        "symptoms": [
+          "interface",
+          "should_be_passive"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_passive",
+        "commands": [
+          "router eigrp {as_number}",
+          "no passive-interface {interface}",
+          "end"
+        ],
+        "verification": "show ip eigrp neighbors",
+        "description": "Remove passive interface configuration"
+      },
+      "confidence": 0.99,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832444",
+      "last_updated": "2026-04-07T16:48:20.323890"
+    },
+    "EIGRP_006": {
+      "id": "EIGRP_006",
+      "condition": {
+        "problem_type": "missing network",
+        "category": "eigrp",
+        "symptoms": [
+          "network"
+        ]
+      },
+      "action": {
+        "fix_type": "add_network",
+        "commands": [
+          "router eigrp {as_number}",
+          "network {network}",
+          "end"
+        ],
+        "verification": "show ip eigrp topology",
+        "description": "Add missing network statement"
+      },
+      "confidence": 0.9139065580000001,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832445",
+      "last_updated": "2026-04-05T23:39:52.887687"
+    },
+    "OSPF_001": {
+      "id": "OSPF_001",
+      "condition": {
+        "problem_type": "process id mismatch",
+        "category": "ospf",
+        "symptoms": [
+          "current",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "revert_to_baseline",
+        "commands": [
+          "# Revert to stable configuration"
+        ],
+        "verification": "show ip ospf",
+        "description": "Process ID mismatch requires reverting to baseline",
+        "requires_manual": true
+      },
+      "confidence": 0.9,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832446"
+    },
+    "OSPF_002": {
+      "id": "OSPF_002",
+      "condition": {
+        "problem_type": "hello interval mismatch",
+        "category": "ospf",
+        "symptoms": [
+          "interface",
+          "current",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_timers",
+        "commands": [
+          "interface {interface}",
+          "ip ospf hello-interval {expected_hello}",
+          "ip ospf dead-interval {expected_dead}",
+          "end"
+        ],
+        "verification": "show ip ospf interface {interface}",
+        "description": "Adjust OSPF timers to match neighbors"
+      },
+      "confidence": 0.99,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832447",
+      "last_updated": "2026-04-07T16:48:20.324301"
+    },
+    "OSPF_003": {
+      "id": "OSPF_003",
+      "condition": {
+        "problem_type": "router id mismatch",
+        "category": "ospf",
+        "symptoms": [
+          "current",
+          "expected"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_router_id",
+        "commands": [
+          "router ospf {process_id}",
+          "router-id {expected}",
+          "end",
+          "# NOTE: May need to clear OSPF process"
+        ],
+        "verification": "show ip ospf",
+        "description": "Configure correct OSPF router ID"
+      },
+      "confidence": 0.99,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832448",
+      "last_updated": "2026-04-07T16:48:20.326356"
+    },
+    "OSPF_004": {
+      "id": "OSPF_004",
+      "condition": {
+        "problem_type": "possible duplicate router id",
+        "category": "ospf",
+        "symptoms": [
+          "message"
+        ]
+      },
+      "action": {
+        "fix_type": "revert_to_baseline",
+        "commands": [
+          "# Revert to stable configuration with unique router IDs"
+        ],
+        "verification": "show ip ospf neighbor",
+        "description": "Duplicate RID requires baseline restoration",
+        "requires_manual": true
+      },
+      "confidence": 0.8,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832448"
+    },
+    "OSPF_005": {
+      "id": "OSPF_005",
+      "condition": {
+        "problem_type": "passive interface",
+        "category": "ospf",
+        "symptoms": [
+          "interface",
+          "should_be_passive"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_passive",
+        "commands": [
+          "router ospf {process_id}",
+          "no passive-interface {interface}",
+          "end"
+        ],
+        "verification": "show ip ospf neighbor",
+        "description": "Remove passive interface configuration"
+      },
+      "confidence": 0.99,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832449",
+      "last_updated": "2026-04-07T16:48:20.324732"
+    },
+    "OSPF_006": {
+      "id": "OSPF_006",
+      "condition": {
+        "problem_type": "interface not in ospf",
+        "category": "ospf",
+        "symptoms": [
+          "interface",
+          "expected_network",
+          "expected_area"
+        ]
+      },
+      "action": {
+        "fix_type": "add_to_ospf",
+        "commands": [
+          "router ospf {process_id}",
+          "network {expected_network} {expected_wildcard} area {expected_area}",
+          "end"
+        ],
+        "verification": "show ip ospf interface brief",
+        "description": "Add interface to OSPF process"
+      },
+      "confidence": 0.8,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832450"
+    },
+    "OSPF_007": {
+      "id": "OSPF_007",
+      "condition": {
+        "problem_type": "area mismatch",
+        "category": "ospf",
+        "symptoms": [
+          "interface",
+          "current_area",
+          "expected_area"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_area",
+        "commands": [
+          "interface {interface}",
+          "ip ospf {process_id} area {expected_area}",
+          "end"
+        ],
+        "verification": "show ip ospf interface {interface}",
+        "description": "Configure correct OSPF area"
+      },
+      "confidence": 0.85,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832451"
+    },
+    "OSPF_008": {
+      "id": "OSPF_008",
+      "condition": {
+        "problem_type": "unexpected stub area",
+        "category": "ospf",
+        "symptoms": [
+          "area",
+          "should_be_stub"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_stub_area",
+        "commands": [
+          "router ospf {process_id}",
+          "no area {area} stub",
+          "end"
+        ],
+        "verification": "show ip ospf",
+        "description": "Remove unexpected stub area configuration"
+      },
+      "confidence": 0.99,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832453",
+      "last_updated": "2026-04-07T16:48:20.325384"
+    },
+    "OSPF_009": {
+      "id": "OSPF_009",
+      "condition": {
+        "problem_type": "extra network",
+        "category": "ospf",
+        "symptoms": [
+          "network",
+          "wildcard",
+          "area"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_network",
+        "commands": [
+          "router ospf {process_id}",
+          "no network {network} {wildcard} area {area}",
+          "end"
+        ],
+        "verification": "show ip ospf",
+        "description": "Remove incorrect network statement from OSPF"
+      },
+      "confidence": 0.94188692665,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832454",
+      "last_updated": "2026-03-29T20:17:26.621757"
+    },
+    "OSPF_010": {
+      "id": "OSPF_010",
+      "condition": {
+        "problem_type": "missing network",
+        "category": "ospf",
+        "symptoms": [
+          "network",
+          "wildcard",
+          "area"
+        ]
+      },
+      "action": {
+        "fix_type": "add_network",
+        "commands": [
+          "router ospf {process_id}",
+          "network {network} {wildcard} area {area}",
+          "end"
+        ],
+        "verification": "show ip ospf",
+        "description": "Add missing network statement to OSPF"
+      },
+      "confidence": 0.99,
+      "category": "ospf",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832455",
+      "last_updated": "2026-04-07T16:48:20.325996"
+    },
+    "AUTH_001": {
+      "id": "AUTH_001",
+      "condition": {
+        "problem_type": "authentication mismatch",
+        "category": "general",
+        "symptoms": []
+      },
+      "action": {
+        "fix_type": "revert_to_baseline",
+        "commands": [
+          "# Revert to stable configuration for authentication"
+        ],
+        "verification": "show ip protocols",
+        "description": "Authentication issues require baseline restoration",
+        "requires_manual": true
+      },
+      "confidence": 0.7,
+      "category": "general",
+      "topology_dependent": true,
+      "created": "2026-02-21T00:51:51.832457"
+    },
+    "MINED_OSPF_001": {
+      "id": "MINED_OSPF_001",
+      "condition": {
+        "problem_type": "router id mismatch",
+        "category": "ospf",
+        "symptoms": [
+          "current",
+          "expected",
+          "line",
+          "_ie_rule_id",
+          "_ie_trace_id"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_router_id",
+        "commands": [
+          "router ospf {process_id}",
+          "router-id {expected}",
+          "end"
+        ],
+        "description": "Auto-mined: configure_router_id for router id mismatch",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "mining_stats": {
+        "support": 0.16666666666666666,
+        "successes": 10,
+        "attempts": 10,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359464"
+    },
+    "MINED_INTERFACE_001": {
+      "id": "MINED_INTERFACE_001",
+      "condition": {
+        "problem_type": "shutdown",
+        "category": "interface",
+        "symptoms": [
+          "interface",
+          "status",
+          "should_be_up",
+          "ip_details",
+          "protocol"
+        ]
+      },
+      "action": {
+        "fix_type": "no_shutdown",
+        "commands": [
+          "interface {interface}",
+          "no shutdown",
+          "end"
+        ],
+        "description": "Auto-mined: no_shutdown for shutdown",
+        "verification": "show ip interface brief"
+      },
+      "confidence": 1.0,
+      "category": "interface",
+      "topology_dependent": false,
+      "mined": true,
+      "mining_stats": {
+        "support": 0.15306122448979592,
+        "successes": 15,
+        "attempts": 15,
+        "success_rate": 1.0
+      },
+      "created": "2026-04-07T16:48:20.326764"
+    },
+    "MINED_EIGRP_001": {
+      "id": "MINED_EIGRP_001",
+      "condition": {
+        "problem_type": "non-default k-values",
+        "category": "eigrp",
+        "symptoms": [
+          "values",
+          "expected",
+          "line",
+          "_ie_rule_id",
+          "_ie_trace_id"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_k_values",
+        "commands": [
+          "router eigrp {as_number}",
+          "metric weights {expected}",
+          "end"
+        ],
+        "description": "Auto-mined: configure_k_values for non-default k-values",
+        "verification": "show ip eigrp neighbors"
+      },
+      "confidence": 1.0,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "mined": true,
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359500"
+    },
+    "CTX_R1_001": {
+      "id": "CTX_R1_001",
+      "condition": {
+        "problem_type": "shutdown",
+        "category": "interface",
+        "device": "R1",
+        "symptoms": [
+          "interface",
+          "status",
+          "should_be_up",
+          "ip_details",
+          "protocol"
+        ]
+      },
+      "action": {
+        "fix_type": "no_shutdown",
+        "commands": [
+          "interface {interface}",
+          "no shutdown",
+          "end"
+        ],
+        "description": "Context (R1): no_shutdown for shutdown",
+        "verification": "show ip interface brief"
+      },
+      "confidence": 1.0,
+      "category": "interface",
+      "topology_dependent": false,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R1",
+      "mining_stats": {
+        "support": 0.08247422680412371,
+        "successes": 8,
+        "attempts": 8,
+        "success_rate": 1.0
+      },
+      "created": "2026-04-07T04:37:01.147465"
+    },
+    "CTX_R3_002": {
+      "id": "CTX_R3_002",
+      "condition": {
+        "problem_type": "non-default k-values",
+        "category": "eigrp",
+        "device": "R3",
+        "symptoms": [
+          "values",
+          "expected",
+          "line",
+          "_ie_rule_id",
+          "_ie_trace_id"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_k_values",
+        "commands": [
+          "router eigrp {as_number}",
+          "metric weights {expected}",
+          "end"
+        ],
+        "description": "Context (R3): configure_k_values for non-default k-values",
+        "verification": "show ip eigrp neighbors"
+      },
+      "confidence": 1.0,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R3",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 6,
+        "attempts": 6,
+        "success_rate": 1.0
+      },
+      "created": "2026-04-02T14:24:12.116290"
+    },
+    "CTX_R3_003": {
+      "id": "CTX_R3_003",
+      "condition": {
+        "problem_type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "device": "R3",
+        "symptoms": [
+          "interface",
+          "current_hello",
+          "current_hold",
+          "expected_hello",
+          "expected_hold"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_timers",
+        "commands": [
+          "interface {interface}",
+          "ip hello-interval eigrp {as_number} {expected_hello}",
+          "ip hold-time eigrp {as_number} {expected_hold}",
+          "end"
+        ],
+        "description": "Context (R3): configure_timers for eigrp timer mismatch",
+        "verification": "show ip eigrp neighbors"
+      },
+      "confidence": 1.0,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R3",
+      "mining_stats": {
+        "support": 0.07142857142857142,
+        "successes": 7,
+        "attempts": 7,
+        "success_rate": 1.0
+      },
+      "created": "2026-04-07T16:48:20.327382"
+    },
+    "CTX_R2_004": {
+      "id": "CTX_R2_004",
+      "condition": {
+        "problem_type": "stub configuration",
+        "category": "eigrp",
+        "device": "R2",
+        "symptoms": [
+          "should_be_stub",
+          "line",
+          "_ie_rule_id",
+          "_ie_trace_id",
+          "_ie_confidence"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_stub",
+        "commands": [
+          "router eigrp {as_number}",
+          "no eigrp stub",
+          "end"
+        ],
+        "description": "Context (R2): remove_stub for stub configuration",
+        "verification": "show ip eigrp neighbors"
+      },
+      "confidence": 1.0,
+      "category": "eigrp",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R2",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359785"
+    },
+    "CTX_R2_005": {
+      "id": "CTX_R2_005",
+      "condition": {
+        "problem_type": "passive interface",
+        "category": "interface",
+        "device": "R2",
+        "symptoms": []
+      },
+      "action": {
+        "fix_type": "remove_passive",
+        "commands": [
+          "router {protocol} {as_or_process}",
+          "no passive-interface {interface}",
+          "end"
+        ],
+        "description": "Context (R2): remove_passive for passive interface",
+        "verification": "show ip interface brief"
+      },
+      "confidence": 1.0,
+      "category": "interface",
+      "topology_dependent": false,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R2",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 4,
+        "attempts": 4,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-29T20:17:26.629174"
+    },
+    "CTX_R6_006": {
+      "id": "CTX_R6_006",
+      "condition": {
+        "problem_type": "passive interface",
+        "category": "interface",
+        "device": "R6",
+        "symptoms": []
+      },
+      "action": {
+        "fix_type": "remove_passive",
+        "commands": [
+          "router {protocol} {as_or_process}",
+          "no passive-interface {interface}",
+          "end"
+        ],
+        "description": "Context (R6): remove_passive for passive interface",
+        "verification": "show ip interface brief"
+      },
+      "confidence": 1.0,
+      "category": "interface",
+      "topology_dependent": false,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R6",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 4,
+        "attempts": 4,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-29T20:17:26.629180"
+    },
+    "CTX_R6_007": {
+      "id": "CTX_R6_007",
+      "condition": {
+        "problem_type": "router id mismatch",
+        "category": "ospf",
+        "device": "R6",
+        "symptoms": [
+          "current",
+          "expected",
+          "line",
+          "_ie_rule_id",
+          "_ie_trace_id"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_router_id",
+        "commands": [
+          "router ospf {process_id}",
+          "router-id {expected}",
+          "end"
+        ],
+        "description": "Context (R6): configure_router_id for router id mismatch",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R6",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359811"
+    },
+    "CTX_R5_008": {
+      "id": "CTX_R5_008",
+      "condition": {
+        "problem_type": "unexpected stub area",
+        "category": "ospf",
+        "device": "R5",
+        "symptoms": [
+          "area",
+          "line",
+          "should_be_stub",
+          "_ie_rule_id",
+          "_ie_trace_id"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_stub_area",
+        "commands": [
+          "router ospf {process_id}",
+          "no area {area} stub",
+          "end"
+        ],
+        "description": "Context (R5): remove_stub_area for unexpected stub area",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R5",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359822"
+    },
+    "CTX_R5_009": {
+      "id": "CTX_R5_009",
+      "condition": {
+        "problem_type": "extra network",
+        "category": "ospf",
+        "device": "R5",
+        "symptoms": [
+          "network",
+          "wildcard",
+          "area",
+          "correct_area",
+          "line"
+        ]
+      },
+      "action": {
+        "fix_type": "remove_network",
+        "commands": [
+          "router ospf {process_id}",
+          "no network {network} {wildcard} area {area}",
+          "end"
+        ],
+        "description": "Context (R5): remove_network for extra network",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R5",
+      "mining_stats": {
+        "support": 0.07142857142857142,
+        "successes": 7,
+        "attempts": 7,
+        "success_rate": 1.0
+      },
+      "created": "2026-04-07T16:48:20.327463"
+    },
+    "CTX_R5_010": {
+      "id": "CTX_R5_010",
+      "condition": {
+        "problem_type": "missing network",
+        "category": "ospf",
+        "device": "R5",
+        "symptoms": [
+          "network",
+          "wildcard",
+          "area",
+          "line",
+          "_ie_rule_id"
+        ]
+      },
+      "action": {
+        "fix_type": "add_network",
+        "commands": [
+          "router ospf {process_id}",
+          "network {network} {wildcard} area {area}",
+          "end"
+        ],
+        "description": "Context (R5): add_network for missing network",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R5",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359848"
+    },
+    "CTX_R5_011": {
+      "id": "CTX_R5_011",
+      "condition": {
+        "problem_type": "router id mismatch",
+        "category": "ospf",
+        "device": "R5",
+        "symptoms": [
+          "current",
+          "expected",
+          "line",
+          "_ie_rule_id",
+          "_ie_trace_id"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_router_id",
+        "commands": [
+          "router ospf {process_id}",
+          "router-id {expected}",
+          "end"
+        ],
+        "description": "Context (R5): configure_router_id for router id mismatch",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R5",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 6,
+        "attempts": 6,
+        "success_rate": 1.0
+      },
+      "created": "2026-04-02T14:24:12.116401"
+    },
+    "CTX_R4_012": {
+      "id": "CTX_R4_012",
+      "condition": {
+        "problem_type": "hello interval mismatch",
+        "category": "ospf",
+        "device": "R4",
+        "symptoms": [
+          "interface",
+          "current",
+          "expected",
+          "line",
+          "_ie_rule_id"
+        ]
+      },
+      "action": {
+        "fix_type": "configure_timers",
+        "commands": [
+          "interface {interface}",
+          "ip ospf hello-interval {expected_hello}",
+          "ip ospf dead-interval {expected_dead}",
+          "end"
+        ],
+        "description": "Context (R4): configure_timers for hello interval mismatch",
+        "verification": "show ip ospf neighbor"
+      },
+      "confidence": 1.0,
+      "category": "ospf",
+      "topology_dependent": true,
+      "mined": true,
+      "context_specific": true,
+      "context_device": "R4",
+      "mining_stats": {
+        "support": 0.08333333333333333,
+        "successes": 5,
+        "attempts": 5,
+        "success_rate": 1.0
+      },
+      "created": "2026-03-31T20:29:06.359874"
+    },
+    "IDS_TCP_001": {
+      "id": "IDS_TCP_001",
+      "condition": {
+        "problem_type": "ids_tcp_flood",
+        "category": "ids_security",
+        "symptoms": [
+          "tcp_flood_detected",
+          "nb_ml_anomaly"
+        ]
+      },
+      "action": {
+        "fix_type": "security_shutdown",
+        "commands": [
+          "interface FastEthernet0/0",
+          "shutdown",
+          "end"
+        ],
+        "verification": "show ip interface brief",
+        "description": "Shut R6 FastEthernet0/0 to isolate TCP flood attack source"
+      },
+      "confidence": 0.97,
+      "category": "ids_security",
+      "topology_dependent": false,
+      "created": "2026-04-07T16:46:43.332585"
+    },
+    "IDS_OSPF_001": {
+      "id": "IDS_OSPF_001",
+      "condition": {
+        "problem_type": "ids_ospf_attack",
+        "category": "ids_security",
+        "symptoms": [
+          "ospf_attack_detected",
+          "rf_ml_detection"
+        ]
+      },
+      "action": {
+        "fix_type": "security_shutdown",
+        "commands": [
+          "interface FastEthernet0/0",
+          "shutdown",
+          "end"
+        ],
+        "verification": "show ip interface brief",
+        "description": "Shut R6 FastEthernet0/0 to block OSPF attack traffic"
+      },
+      "confidence": 0.97,
+      "category": "ids_security",
+      "topology_dependent": false,
+      "created": "2026-04-07T16:46:43.332599"
+    }
+  },
+  "problem_history": [
+    {
+      "timestamp": "2026-02-21T00:54:21.074991",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "INT_001"
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.076452",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_002B"
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.077869",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_003B"
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.078896",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1",
+        "rule_id": "EIGRP_004"
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.080068",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1",
+        "rule_id": "EIGRP_005"
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.081167",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_005"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.082351",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.083489",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_008"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.084861",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "OSPF_009"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.086058",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "OSPF_010"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.087187",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-02-21T00:54:21.088407",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4"
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 1.1.1.1",
+        "rule_id": "OSPF_002"
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.316458",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "INT_001"
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.319969",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_004"
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.322322",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1, 192.168.3.2",
+        "rule_id": "EIGRP_005"
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.325658",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_002B"
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.327729",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP Neighbors: 192.168.3.1, 192.168.3.1",
+        "rule_id": "EIGRP_003B"
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.329812",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4"
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 5.5.5.5",
+        "rule_id": "OSPF_002"
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.331200",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_008"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.332497",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_009"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.334338",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_010"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.335778",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.337705",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 5.5.5.5",
+        "rule_id": "OSPF_005"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-02-25T19:39:23.339373",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 4.4.4.4, 5.5.5.5",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.059055",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "INT_001"
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.060793",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_004"
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.063567",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1",
+        "rule_id": "EIGRP_005"
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.066030",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_002B"
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.068692",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP Neighbors: 192.168.3.1",
+        "rule_id": "EIGRP_003B"
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.070808",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4"
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6",
+        "rule_id": "OSPF_002"
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.073144",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_005"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.075168",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.077373",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_008"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.080382",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_009"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.082554",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_010"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-03-03T23:43:32.086289",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-03-29T17:12:06.055040",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 5.5.5.5, 4.4.4.4",
+        "rule_id": "OSPF_003"
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.116830",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_002B",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.119199",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_003B",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.120869",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_004",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.122898",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1, 192.168.2.1",
+        "rule_id": "EIGRP_005",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.124963",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4"
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6",
+        "rule_id": "OSPF_002",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.126847",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_008",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.128676",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_009",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.130706",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_010",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.133074",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend\n# NOTE: May need to clear OSPF process: clear ip ospf process",
+        "verification": "OSPF Neighbors: 6.6.6.6, 4.4.4.4",
+        "rule_id": "OSPF_003",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-03-29T19:53:01.135233",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 5.5.5.5",
+        "rule_id": "OSPF_005",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-03-29T20:09:21.111411",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "INT_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.355806",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.356229",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2",
+        "_ie_rule_id": "CTX_R2_004",
+        "_ie_trace_id": "trace_20260331_202802_584740",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "CTX_R2_004",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.356502",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2",
+        "_ie_rule_id": "EIGRP_005",
+        "_ie_trace_id": "trace_20260331_202807_688428",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1",
+        "rule_id": "EIGRP_005",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.356751",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3",
+        "_ie_rule_id": "MINED_EIGRP_001",
+        "_ie_trace_id": "trace_20260331_202812_792193",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "MINED_EIGRP_001",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.357067",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3",
+        "_ie_rule_id": "CTX_R3_003",
+        "_ie_trace_id": "trace_20260331_202817_896351",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP Neighbors: 192.168.3.1",
+        "rule_id": "CTX_R3_003",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.357441",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4",
+        "_ie_rule_id": "CTX_R4_012",
+        "_ie_trace_id": "trace_20260331_202823_301167",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 5.5.5.5, 6.6.6.6",
+        "rule_id": "CTX_R4_012",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.357738",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5",
+        "_ie_rule_id": "CTX_R5_008",
+        "_ie_trace_id": "trace_20260331_202829_707856",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "CTX_R5_008",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.358052",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5",
+        "_ie_rule_id": "CTX_R5_009",
+        "_ie_trace_id": "trace_20260331_202835_814252",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "CTX_R5_009",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.358323",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5",
+        "_ie_rule_id": "CTX_R5_010",
+        "_ie_trace_id": "trace_20260331_202841_918769",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "CTX_R5_010",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.358562",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5",
+        "_ie_rule_id": "MINED_OSPF_001",
+        "_ie_trace_id": "trace_20260331_202848_022806",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "MINED_OSPF_001",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.358848",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6",
+        "_ie_rule_id": "OSPF_005",
+        "_ie_trace_id": "trace_20260331_202854_126775",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 5.5.5.5",
+        "rule_id": "OSPF_005",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-03-31T20:29:06.359103",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6",
+        "_ie_rule_id": "CTX_R6_007",
+        "_ie_trace_id": "trace_20260331_202900_234036",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 5.5.5.5",
+        "rule_id": "CTX_R6_007",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.110246",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.110487",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3",
+        "_ie_rule_id": "CTX_R3_002",
+        "_ie_trace_id": "trace_20260402_142308_344623",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "CTX_R3_002",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.111357",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3",
+        "_ie_rule_id": "CTX_R3_003",
+        "_ie_trace_id": "trace_20260402_142313_447550",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "CTX_R3_003",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.112039",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2",
+        "_ie_rule_id": "EIGRP_004",
+        "_ie_trace_id": "trace_20260402_142318_850897",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_004",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.112253",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2",
+        "_ie_rule_id": "EIGRP_005",
+        "_ie_trace_id": "trace_20260402_142323_953964",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1",
+        "rule_id": "EIGRP_005",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.112678",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4",
+        "_ie_rule_id": "OSPF_002",
+        "_ie_trace_id": "trace_20260402_142329_057709",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 5.5.5.5, 6.6.6.6",
+        "rule_id": "OSPF_002",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.113212",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6",
+        "_ie_rule_id": "OSPF_005",
+        "_ie_trace_id": "trace_20260402_142335_464319",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_005",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.113759",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6",
+        "_ie_rule_id": "CTX_R5_011",
+        "_ie_trace_id": "trace_20260402_142341_571183",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "CTX_R5_011",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.114219",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5",
+        "_ie_rule_id": "OSPF_008",
+        "_ie_trace_id": "trace_20260402_142347_674687",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "OSPF_008",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.114530",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5",
+        "_ie_rule_id": "CTX_R5_009",
+        "_ie_trace_id": "trace_20260402_142353_781295",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4",
+        "rule_id": "CTX_R5_009",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.114871",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5",
+        "_ie_rule_id": "OSPF_010",
+        "_ie_trace_id": "trace_20260402_142359_887407",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "OSPF_010",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-04-02T14:24:12.115366",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5",
+        "_ie_rule_id": "CTX_R5_011",
+        "_ie_trace_id": "trace_20260402_142405_990992",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend",
+        "verification": "OSPF Neighbors: 4.4.4.4, 6.6.6.6",
+        "rule_id": "CTX_R5_011",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-04-03T23:11:03.671380",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.11.1",
+        "wildcard": "0.0.0.0",
+        "area": "0",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.11.1 0.0.0.0 area 0",
+        "device": "R6",
+        "_ie_rule_id": "CTX_R5_009",
+        "_ie_trace_id": "trace_20260403_231057_537474",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.11.1 0.0.0.0 area 0\nend",
+        "verification": "OSPF: No neighbors found",
+        "rule_id": "CTX_R5_009",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-04-05T23:39:52.886965",
+      "problem": {
+        "type": "missing network",
+        "category": "eigrp",
+        "network": "192.168.3.0",
+        "line": "missing: network 192.168.3.0",
+        "device": "R2",
+        "_ie_rule_id": "EIGRP_006",
+        "_ie_trace_id": "trace_20260405_233942_673919",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nnetwork 192.168.3.0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_006",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-04-06T01:47:22.883131",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.2.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T05:22:35.741952",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.2.2 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R2"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R2",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T05:22:35.743865",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.3.2 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R3"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R3",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T05:22:35.747575",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.11.2 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R7"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R7",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T05:22:35.748537",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.6.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R4"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R4",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T05:22:35.748906",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.7.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R6",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T05:22:35.749290",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.5.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R5"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R5",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-06T21:28:24.065783",
+      "problem": {
+        "type": "ids_tcp_flood",
+        "category": "ids_security",
+        "device": "R6",
+        "interface": "FastEthernet0/0",
+        "symptoms": [
+          "attack_detected"
+        ],
+        "rule_id": "IDS_TCP_001",
+        "_ie_rule_id": "IDS_TCP_001",
+        "_ie_trace_id": "trace_20260406_212818_756519",
+        "_ie_confidence": 0.8348
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nshutdown\nend",
+        "verification": "show ip interface brief\r\nInterface                  IP-Address      OK? Method Status                Protocol\r\nFastEthernet0/0            192.168.7.1     YES NVRAM  administratively down down    \r\nSerial0/0                  192.168.9.2     YES NVRAM  up                    up      \r\nFastEthernet0/1            192.168.11.1    YES NVRAM  up                    up      \r\nSerial0/1                  192.168.10.2    YES NVRAM  up                    up      \r\nFastEthernet1/0            192.168.231.106 YES NVRAM  up                    up      \r\nFastEthernet2/0            unassigned      YES unset  administratively down down    \r\nR6#\r\n*Mar  1 00:20:50.651: %LINK-5-CHANGED: Interface FastEthernet0/0, changed state to administratively down\r\n*Mar  1 00:20:51.651: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0, changed state to down\r\nR6#",
+        "rule_id": "IDS_TCP_001",
+        "fix_type": "",
+        "confidence": 0.8348
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ids_security",
+      "problem_type": "ids_tcp_flood"
+    },
+    {
+      "timestamp": "2026-04-06T21:43:59.860293",
+      "problem": {
+        "type": "ids_ospf_attack",
+        "category": "ids_security",
+        "device": "R6",
+        "interface": "FastEthernet0/0",
+        "symptoms": [
+          "attack_detected"
+        ],
+        "rule_id": "IDS_OSPF_001",
+        "_ie_rule_id": "IDS_OSPF_001",
+        "_ie_trace_id": "trace_20260406_214354_532449",
+        "_ie_confidence": 0.8404
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nshutdown\nend",
+        "verification": "show ip interface brief\r\nInterface                  IP-Address      OK? Method Status                Protocol\r\nFastEthernet0/0            192.168.7.1     YES NVRAM  administratively down down    \r\nSerial0/0                  192.168.9.2     YES NVRAM  up                    up      \r\nFastEthernet0/1            192.168.11.1    YES NVRAM  up                    up      \r\nSerial0/1                  192.168.10.2    YES NVRAM  up                    up      \r\nFastEthernet1/0            192.168.231.106 YES NVRAM  up                    up      \r\nFastEthernet2/0            unassigned      YES unset  administratively down down    \r\nR6#",
+        "rule_id": "IDS_OSPF_001",
+        "fix_type": "",
+        "confidence": 0.8404
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ids_security",
+      "problem_type": "ids_ospf_attack"
+    },
+    {
+      "timestamp": "2026-04-07T01:33:16.605840",
+      "problem": {
+        "type": "ids_tcp_flood",
+        "category": "ids_security",
+        "device": "R6",
+        "interface": "FastEthernet0/0",
+        "symptoms": [
+          "attack_detected"
+        ],
+        "rule_id": "IDS_TCP_001",
+        "_ie_rule_id": "IDS_TCP_001",
+        "_ie_trace_id": "trace_20260407_013311_294638",
+        "_ie_confidence": 0.8696
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nshutdown\nend",
+        "verification": "show ip interface brief\r\nInterface                  IP-Address      OK? Method Status                Protocol\r\nFastEthernet0/0            192.168.7.1     YES NVRAM  administratively down down    \r\nSerial0/0                  192.168.9.2     YES NVRAM  up                    up      \r\nFastEthernet0/1            192.168.11.1    YES NVRAM  up                    up      \r\nSerial0/1                  192.168.10.2    YES NVRAM  up                    up      \r\nFastEthernet1/0            192.168.231.106 YES NVRAM  up                    up      \r\nFastEthernet2/0            unassigned      YES NVRAM  administratively down down    \r\nR6#\r\n*Mar  1 01:28:14.979: %LINK-5-CHANGED: Interface FastEthernet0/0, changed state to administratively down\r\n*Mar  1 01:28:15.979: %LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0, changed state to down\r\nR6#",
+        "rule_id": "IDS_TCP_001",
+        "fix_type": "",
+        "confidence": 0.8696
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ids_security",
+      "problem_type": "ids_tcp_flood"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.138534",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet1/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.1.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R1"
+      },
+      "solution": {
+        "commands": "interface FastEthernet1/0\nno shutdown",
+        "verification": "FastEthernet1/0: up/up",
+        "rule_id": "MINED_INTERFACE_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R1",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.138987",
+      "problem": {
+        "type": "shutdown",
+        "category": "interface",
+        "interface": "FastEthernet0/0",
+        "status": "administratively down",
+        "should_be_up": true,
+        "ip_details": "IPv4: 192.168.7.1 255.255.255.0",
+        "protocol": "down",
+        "severity": "high",
+        "device": "R6"
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nno shutdown",
+        "verification": "FastEthernet0/0: up/up",
+        "rule_id": "CTX_R1_001",
+        "fix_type": "",
+        "confidence": 0.8
+      },
+      "success": true,
+      "device": "R6",
+      "category": "interface",
+      "problem_type": "shutdown"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.140371",
+      "problem": {
+        "type": "stub configuration",
+        "category": "eigrp",
+        "should_be_stub": false,
+        "line": "eigrp stub (should not be configured)",
+        "device": "R2",
+        "_ie_rule_id": "EIGRP_004",
+        "_ie_trace_id": "trace_20260407_043557_374463",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno eigrp stub\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_004",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "stub configuration"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.140708",
+      "problem": {
+        "type": "passive interface",
+        "category": "eigrp",
+        "interface": "FastEthernet1/0",
+        "line": "passive-interface FastEthernet1/0",
+        "should_be_passive": false,
+        "device": "R2",
+        "_ie_rule_id": "EIGRP_005",
+        "_ie_trace_id": "trace_20260407_043602_478840",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nno passive-interface FastEthernet1/0\nend",
+        "verification": "EIGRP Neighbors: 192.168.2.1",
+        "rule_id": "EIGRP_005",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R2",
+      "category": "eigrp",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.141037",
+      "problem": {
+        "type": "non-default k-values",
+        "category": "eigrp",
+        "values": "0 2 0 1 0 0",
+        "expected": "0 1 0 1 0 0",
+        "line": "metric weights 0 2 0 1 0 0",
+        "device": "R3",
+        "_ie_rule_id": "EIGRP_002B",
+        "_ie_trace_id": "trace_20260407_043607_583876",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router eigrp 1\nmetric weights 0 1 0 1 0 0\nend",
+        "verification": "EIGRP: No neighbors found",
+        "rule_id": "EIGRP_002B",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "non-default k-values"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.143018",
+      "problem": {
+        "type": "eigrp timer mismatch",
+        "category": "eigrp",
+        "interface": "FastEthernet0/0",
+        "current_hello": 1,
+        "current_hold": 3,
+        "expected_hello": 5,
+        "expected_hold": 15,
+        "as_number": "1",
+        "line": "FastEthernet0/0: Hello 1s/5s, Hold 3s/15s",
+        "device": "R3",
+        "_ie_rule_id": "CTX_R3_003",
+        "_ie_trace_id": "trace_20260407_043612_688480",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "interface FastEthernet0/0\nip hello-interval eigrp 1 5\nip hold-time eigrp 1 15\nend",
+        "verification": "EIGRP Neighbors: 192.168.3.1",
+        "rule_id": "CTX_R3_003",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R3",
+      "category": "eigrp",
+      "problem_type": "eigrp timer mismatch"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.143576",
+      "problem": {
+        "type": "hello interval mismatch",
+        "category": "ospf",
+        "interface": "Serial0/0",
+        "current": 30,
+        "expected": 10,
+        "line": "Serial0/0: Hello 30 (expected 10)",
+        "device": "R4",
+        "_ie_rule_id": "OSPF_002",
+        "_ie_trace_id": "trace_20260407_043618_094146",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "interface Serial0/0\nip ospf hello-interval 10\nip ospf dead-interval 40\nend",
+        "verification": "OSPF Neighbors: 5.5.5.5, 6.6.6.6",
+        "rule_id": "OSPF_002",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R4",
+      "category": "ospf",
+      "problem_type": "hello interval mismatch"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.144059",
+      "problem": {
+        "type": "unexpected stub area",
+        "category": "ospf",
+        "area": "1",
+        "line": "area 1 stub (should not be configured)",
+        "should_be_stub": false,
+        "device": "R5",
+        "_ie_rule_id": "OSPF_008",
+        "_ie_trace_id": "trace_20260407_043624_500805",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno area 1 stub\nend",
+        "verification": "OSPF Neighbors: 192.168.231.104",
+        "rule_id": "OSPF_008",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "unexpected stub area"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.144492",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "1",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.10.0 0.0.0.255 area 1",
+        "device": "R5",
+        "_ie_rule_id": "CTX_R5_009",
+        "_ie_trace_id": "trace_20260407_043630_609262",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.10.0 0.0.0.255 area 1\nend",
+        "verification": "OSPF Neighbors: 192.168.231.104",
+        "rule_id": "CTX_R5_009",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "extra network"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.144867",
+      "problem": {
+        "type": "missing network",
+        "category": "ospf",
+        "network": "192.168.10.0",
+        "wildcard": "0.0.0.255",
+        "area": "0",
+        "line": "missing: network 192.168.10.0 0.0.0.255 area 0",
+        "device": "R5",
+        "_ie_rule_id": "OSPF_010",
+        "_ie_trace_id": "trace_20260407_043636_715301",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nnetwork 192.168.10.0 0.0.0.255 area 0\nend",
+        "verification": "OSPF Neighbors: 192.168.231.104, 6.6.6.6",
+        "rule_id": "OSPF_010",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "missing network"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.145280",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "5.5.5.5",
+        "line": "Router ID 1.1.1.1 (expected 5.5.5.5)",
+        "device": "R5",
+        "_ie_rule_id": "OSPF_003",
+        "_ie_trace_id": "trace_20260407_043642_821494",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 5.5.5.5\nend\n# NOTE: May need to clear OSPF process",
+        "verification": "OSPF Neighbors: 192.168.231.104, 6.6.6.6",
+        "rule_id": "OSPF_003",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R5",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.145595",
+      "problem": {
+        "type": "passive interface",
+        "category": "ospf",
+        "interface": "FastEthernet0/0",
+        "line": "passive-interface FastEthernet0/0",
+        "should_be_passive": false,
+        "device": "R6",
+        "_ie_rule_id": "OSPF_005",
+        "_ie_trace_id": "trace_20260407_043648_925749",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno passive-interface FastEthernet0/0\nend",
+        "verification": "OSPF Neighbors: 192.168.231.104, 5.5.5.5",
+        "rule_id": "OSPF_005",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "passive interface"
+    },
+    {
+      "timestamp": "2026-04-07T04:37:01.146069",
+      "problem": {
+        "type": "router id mismatch",
+        "category": "ospf",
+        "current": "1.1.1.1",
+        "expected": "6.6.6.6",
+        "line": "Router ID 1.1.1.1 (expected 6.6.6.6)",
+        "device": "R6",
+        "_ie_rule_id": "OSPF_003",
+        "_ie_trace_id": "trace_20260407_043655_030236",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nrouter-id 6.6.6.6\nend\n# NOTE: May need to clear OSPF process",
+        "verification": "OSPF Neighbors: 192.168.231.104, 5.5.5.5",
+        "rule_id": "OSPF_003",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "router id mismatch"
+    },
+    {
+      "timestamp": "2026-04-07T13:52:48.593095",
+      "problem": {
+        "type": "extra network",
+        "category": "ospf",
+        "network": "192.168.11.1",
+        "wildcard": "0.0.0.0",
+        "area": "0",
+        "correct_area": "0",
+        "line": "unexpected: network 192.168.11.1 0.0.0.0 area 0",
+        "device": "R6",
+        "_ie_rule_id": "CTX_R5_009",
+        "_ie_trace_id": "trace_20260407_135211_944488",
+        "_ie_confidence": 1.0
+      },
+      "solution": {
+        "commands": "router ospf 10\nno network 192.168.11.1 0.0.0.0 area 0\nend",
+        "verification": "OSPF Neighbors: 192.168.9.1",
+        "rule_id": "CTX_R5_009",
+        "fix_type": "",
+        "confidence": 1.0
+      },
+      "success": true,
+      "device": "R6",
+      "category": "ospf",
+      "problem_type": "extra network"
+    }
+  ],
+  "rule_stats": {
+    "INT_001": {
+      "attempts": 6,
+      "successes": 6
+    },
+    "EIGRP_002B": {
+      "attempts": 17,
+      "successes": 17
+    },
+    "EIGRP_003B": {
+      "attempts": 7,
+      "successes": 7
+    },
+    "EIGRP_004": {
+      "attempts": 18,
+      "successes": 18
+    },
+    "EIGRP_005": {
+      "attempts": 22,
+      "successes": 22
+    },
+    "OSPF_005": {
+      "attempts": 21,
+      "successes": 21
+    },
+    "OSPF_003": {
+      "attempts": 32,
+      "successes": 32
+    },
+    "OSPF_008": {
+      "attempts": 18,
+      "successes": 18
+    },
+    "OSPF_009": {
+      "attempts": 7,
+      "successes": 7
+    },
+    "OSPF_010": {
+      "attempts": 18,
+      "successes": 18
+    },
+    "OSPF_002": {
+      "attempts": 18,
+      "successes": 18
+    },
+    "MINED_INTERFACE_001": {
+      "attempts": 33,
+      "successes": 33
+    },
+    "CTX_R2_004": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "MINED_EIGRP_001": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "CTX_R3_003": {
+      "attempts": 15,
+      "successes": 15
+    },
+    "CTX_R5_008": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "CTX_R5_009": {
+      "attempts": 17,
+      "successes": 17
+    },
+    "CTX_R5_010": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "MINED_OSPF_001": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "CTX_R4_012": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "CTX_R6_007": {
+      "attempts": 4,
+      "successes": 4
+    },
+    "CTX_R3_002": {
+      "attempts": 1,
+      "successes": 1
+    },
+    "CTX_R5_011": {
+      "attempts": 2,
+      "successes": 2
+    },
+    "EIGRP_006": {
+      "attempts": 2,
+      "successes": 2
+    },
+    "CTX_R1_001": {
+      "attempts": 2,
+      "successes": 2
+    },
+    "IDS_TCP_001": {
+      "attempts": 5,
+      "successes": 5
+    },
+    "IDS_OSPF_001": {
+      "attempts": 1,
+      "successes": 1
+    }
+  },
+  "protocol_defaults": {
+    "eigrp": {
+      "hello_timer": 5,
+      "hold_timer": 15,
+      "k_values": "0 1 0 1 0 0",
+      "as_number": "1"
+    },
+    "ospf": {
+      "hello_timer": 10,
+      "dead_timer": 40,
+      "process_id": "10",
+      "router_ids": {
+        "R4": "4.4.4.4",
+        "R5": "5.5.5.5",
+        "R6": "6.6.6.6"
+      }
+    }
+  },
+  "last_saved": "2026-04-07T16:48:20.330213"
+}
