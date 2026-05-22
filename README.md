@@ -1,4 +1,4 @@
-# AI-Assisted Network Troubleshooter & ML Intrusion Detection System
+# Custom Built AI Network Troubleshooter with Machine Learning and Intrusion Detection System
 
 A capstone project combining a rule-based AI diagnostic engine, a machine learning IDS, and a real-time telemetry pipeline, all integrated into a GNS3-simulated network environment with a graphical dashboard.
 
