@@ -1,20 +1,6 @@
 # AI-Assisted Network Troubleshooter & ML Intrusion Detection System
 
-A capstone project combining a rule-based AI diagnostic engine, a machine learning IDS, and a real-time telemetry pipeline — all integrated into a GNS3-simulated network environment with a graphical dashboard.
-
----
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Environment](#environment)
-- [System Architecture](#system-architecture)
-- [Rule-Based AI Troubleshooter](#rule-based-ai-troubleshooter)
-- [Machine Learning IDS](#machine-learning-ids)
-- [Telemetry Pipeline](#telemetry-pipeline)
-- [Graphical User Interface](#graphical-user-interface)
-- [Results](#results)
-- [Recommendations for Future Work](#recommendations-for-future-work)
+A capstone project combining a rule-based AI diagnostic engine, a machine learning IDS, and a real-time telemetry pipeline, all integrated into a GNS3-simulated network environment with a graphical dashboard.
 
 ---
 
@@ -26,56 +12,22 @@ The rule engine is designed to **dynamically expand its knowledge base** with ea
 
 ---
 
-## Environment
+## Table of Contents
 
-| Component | Purpose |
-|-----------|---------|
-| **GNS3** | Network simulation with real router/switch images |
-| **VMware + Ubuntu VM** | Host environment for running all tooling |
-| **Kali Linux VM** | Attack simulation (OSPF flood, SYN flood) |
-| **Python** | Core language for AI, IDS, and telemetry components |
-| **Wireshark** | Traffic capture for IDS dataset creation |
-| **NFStreamer** | Flow-level feature extraction for Random Forest model |
-| **Scapy** | Packet-level feature extraction for Naive Bayes model |
-| **GitHub** | Version control and collaboration |
-
----
-
-## System Architecture
-
-```
-╔══════════════════════════════════════════════════════════════════╗
-║                          HOST MACHINE                            ║
-║                                                                  ║
-║   GNS3 Simulation                  ML IDS                        ║
-║   (Network Topology) ─────────────(Random Forest + Naive Bayes) ║
-║          │                                                       ║
-║          │ Cloud Interface (Host Bridge)                         ║
-║          │                                                       ║
-║  ╔═══════╪══════════════════════╗  ╔═══════════════════════════╗ ║
-║  ║       │    UBUNTU VM         ║  ║        KALI LINUX VM      ║ ║
-║  ║       │                      ║  ║                           ║ ║
-║  ║  ┌────┴──────────┐           ║  ║  ┌─────────────────────┐  ║ ║
-║  ║  │ Rule-Based AI │           ║  ║  │   Attack Simulation │  ║ ║
-║  ║  └───────────────┘           ║  ║  │  (OSPF Flood,       │  ║ ║
-║  ║                              ║  ║  │   SYN Flood)        │  ║ ║
-║  ║  ┌───────────────┐           ║  ║  └─────────────────────┘  ║ ║
-║  ║  │ Flask Web App │           ║  ║                           ║ ║
-║  ║  └───────────────┘           ║  ╚═══════════════════════════╝ ║
-║  ║                              ║                               ║
-║  ║  ┌───────────────────────┐   ║                               ║
-║  ║  │  Telemetry Pipeline   │   ║                               ║
-║  ║  │  SNMP  → Telegraf     │   ║                               ║
-║  ║  │  Syslog → Telegraf    │   ║                               ║
-║  ║  │  Telegraf → InfluxDB  │   ║                               ║
-║  ║  └───────────────────────┘   ║                               ║
-║  ╚══════════════════════════════╝                               ║
-╚══════════════════════════════════════════════════════════════════╝
-```
+- [Overview](#overview)
+- [Rule-Based AI Troubleshooter](#rule-based-ai-troubleshooter)
+- [Telemetry Pipeline and GUI](#telemetry-pipeline-and-gui)
+- [Machine Learning IDS](#machine-learning-ids)
+- [System Architecture](#system-architecture)
+- [Project Structure](#project-structure)
+- [Results](#results)
+- [Recommendations for Future Work](#recommendations-for-future-work)
 
 ---
 
 ## Rule-Based AI Troubleshooter
+
+![Network Troubleshooter Dashboard](https://raw.githubusercontent.com/toobad000/AI-Assisted-Network-Troubleshooter/main/images/network-tshooter1.png)
 
 ### Capabilities
 
@@ -100,7 +52,7 @@ The retrieved output is passed through protocol-specific decision trees (`ospf_t
 
 #### 3. Topology-Aware Fix Selection via the Knowledge Base
 
-Most routing problems are not black and white. A dropped OSPF neighbor could be caused by a timer mismatch, an area ID conflict, a passive interface, a duplicate router ID, or an authentication issue. The correct fix depends entirely on the topology context — whether a stub should exist in that location, which area a given interface belongs to, what the expected router ID is for that device.
+Most routing problems are not black and white. A dropped OSPF neighbor could be caused by a timer mismatch, an area ID conflict, a passive interface, a duplicate router ID, or an authentication issue. The correct fix depends entirely on the topology context: whether a stub should exist in that location, which area a given interface belongs to, what the expected router ID is for that device.
 
 To handle this, the system maintains a configuration versioning system (`config_manager.py`) that stores a known-good stable baseline for every device. When a problem is detected, the current configuration is compared against this baseline to extract the expected values and inform the fix.
 
@@ -113,69 +65,62 @@ Rules fall into three tiers: base rules (hand-authored), mined rules (auto-gener
 
 #### 4. Inference Engine and Fix Ranking
 
-The inference engine (`inference_engine.py`) queries the knowledge base for all candidate rules matching the detected problem type and device. It ranks candidates by confidence score and selects the highest-confidence rule that meets a minimum tier threshold. If no rule clears the threshold, the fallback is a baseline revert — the system proposes restoring the affected device to its last known stable configuration rather than guessing.
+The inference engine (`inference_engine.py`) queries the knowledge base for all candidate rules matching the detected problem type and device. It ranks candidates by confidence score and selects the highest-confidence rule that meets a minimum tier threshold. If no rule clears the threshold, the fallback is a baseline revert: the system proposes restoring the affected device to its last known stable configuration rather than guessing.
 
-Each fix decision produces an explanation trace visible in the GUI, showing the full reasoning path:
+Each fix decision produces a full explanation trace visible in the GUI, showing the reasoning path, the selected rule, its confidence level and tier, and all alternatives that were considered and rejected.
 
-```
-PROBLEM DETECTED
-non-default k-values on R3
-
-REASONING PATH
-KB returned 3 candidate rule(s)
-Found 3 similar historical case(s)
-IE selected rule EIGRP_002B (CF=1.000, tier=2)
-Commands baseline-validated and pre-formatted
-
-FIX SELECTED
-EIGRP_002B
-Reset EIGRP metric weights to default | CF: 100% | Tier 2 | Baseline ✓
-
-Alternatives rejected:
-  MINED_EIGRP_001 - Superseded by higher-confidence rule
-  CTX_R3_002     - Superseded by higher-confidence rule
-```
+![Inference Engine Explanation Trace](https://raw.githubusercontent.com/toobad000/AI-Assisted-Network-Troubleshooter/main/images/IEtrace.png)
 
 #### 5. Fix Application and Verification
 
-`fix_applier.py` connects to the target device via Telnet and pushes the selected IOS commands. After applying the fix, it runs the rule's verification command (`show ip eigrp neighbors`, `show ip ospf`, etc.) and checks the output against expected state. The result — success or failure, commands used, verification output — is logged to the run history.
+`fix_applier.py` connects to the target device via Telnet and pushes the selected IOS commands. After applying the fix, it runs the rule's verification command (`show ip eigrp neighbors`, `show ip ospf`, etc.) and checks the output against expected state. The result, including success or failure, commands used, and verification output, is logged to the run history.
 
 #### 6. Post-Run Learning and Rule Mining
 
 After each diagnostic run, every rule that was invoked has its `attempts` and `successes` counters updated, and its confidence score is recalculated accordingly. The rule miner (`rule_miner.py`) then analyzes the run history looking for recurring problem-fix patterns that don't yet have a dedicated rule. When a pattern meets the support and success-rate thresholds, a new rule is automatically created and added to the knowledge base.
 
-Over time, generalized rules gain device-specific context variants. A base rule like "if EIGRP stub present and should not be, remove it" may produce a `CTX_R2_004` variant scoped specifically to R2 with a higher confidence score reflecting its track record on that device. This makes the system progressively faster and more precise without expanding a context window — instead of replaying history each time, the learned context is baked directly into compact, targeted rules that execute in constant time.
+Over time, generalized rules gain device-specific context variants. A base rule like "if EIGRP stub present and should not be, remove it" may produce a `CTX_R2_004` variant scoped specifically to R2 with a higher confidence score reflecting its track record on that device. This makes the system progressively faster and more precise without expanding a context window: instead of replaying history each time, the learned context is baked directly into compact, targeted rules that execute in constant time.
 
-### Project Structure
+---
+
+## Telemetry Pipeline and GUI
+
+![Telemetry Dashboard](https://raw.githubusercontent.com/toobad000/AI-Assisted-Network-Troubleshooter/main/images/tele1.png)
+
+### Telemetry Pipeline
 
 ```
-Capstone_RuleBasedAI/
-├── config_parser.py          # Parses device configs for baseline values
-├── runner.py                 # Main orchestrator
-├── core/
-│   ├── advanced_analytics.py # Cross-device correlation and root cause tracing
-│   ├── certainty_factors.py  # Problem confidence scoring
-│   ├── config_manager.py     # Config save/load/versioning
-│   ├── inference_engine.py   # Symptom-to-diagnosis reasoning
-│   ├── knowledge_base.py     # Rules and learned facts
-│   └── rule_miner.py         # Automatic rule generation from run history
-├── detection/
-│   ├── eigrp_tree.py
-│   ├── interface_tree.py
-│   ├── ospf_tree.py
-│   └── problem_detector.py
-├── history/
-│   ├── configs/              # Stable device config snapshots
-│   ├── knowledge/            # knowledge_base.json
-│   └── runs/                 # Past run logs
-├── resolution/
-│   ├── fix_applier.py        # Telnet-based fix execution
-│   └── fix_recommender.py    # Ranked fix generation
-└── utils/
-    ├── network_utils.py
-    ├── reporter.py
-    └── telnet_utils.py
+GNS3 Devices
+     │
+     ├── SNMP (pull) ──────────────┐
+     │                             ▼
+     └── Syslog (push) ──► Telegraf ──► InfluxDB ──► GUI / AI
 ```
+
+- **SNMP** polls devices for bandwidth utilization, CPU load, memory usage, and interface errors
+- **Syslog** receives push notifications whenever a configuration change is made on a device, enabling detection of threat-actor modifications
+- **Telegraf** normalizes raw SNMP OIDs and messy Syslog streams into structured data and keeps a port open to receive incoming Syslog messages
+- **InfluxDB** stores all telemetry data, enabling real-time monitoring, filtering, and graphing of network health
+
+> Previous stack (Flask + Prometheus) was replaced due to added complexity, higher resource consumption, and slower AI response times.
+
+### Graphical User Interface
+
+The GUI replaces raw terminal output with a structured dashboard. Beyond manual scans, the system monitors the network continuously and automatically surfaces alerts without any user interaction.
+
+In addition to on-demand diagnostic scans, the system detects and alerts on network events in real time. Unauthorized configuration changes, neighbor adjacency drops, and interface state changes automatically trigger alerts to the dashboard. This simulates a realistic threat scenario where an attacker has gained access to the network and is maliciously modifying device configurations. Each alert appears in the dashboard with device, event type, and severity, and clicking any alert directly launches the troubleshooter against the affected device, allowing the issue to be diagnosed and remediated in one step.
+
+**Key Panels:**
+
+- **Real-Time Progress Log** - live feed of all changes being applied to the network
+- **Active Device Panel** - shows which devices are currently reachable
+- **Live Network Status** - CPU usage, bandwidth, and performance per device
+- **IDS Alert Log** - displays triggered alerts with severity levels
+- **Integrated Troubleshooting** - execute ping, traceroute, or any command directly from the GUI to any device
+- **Config History Browser** - browse past configurations and roll back to any previous state
+- **Telemetry Data Panel** - live view of all telemetry data flowing through the pipeline
+
+Two major bugs were resolved during GUI development. A Telnet buffer truncation issue caused by a static read timer was fixed by switching to prompt-based termination, guaranteeing 100% config data integrity. UI thread freezing during network scans was resolved with a multithreaded architecture that offloads heavy operations to background threads with thread-safe UI updates.
 
 ---
 
@@ -213,42 +158,87 @@ The near-identical scores indicate the model has learned generalizable patterns 
 
 ---
 
-## Telemetry Pipeline
+## System Architecture
 
 ```
-GNS3 Devices
-     │
-     ├── SNMP (pull) ──────────────┐
-     │                             ▼
-     └── Syslog (push) ──► Telegraf ──► InfluxDB ──► GUI / AI
+╔══════════════════════════════════════════════════════════════════╗
+║                          HOST MACHINE                            ║
+║                                                                  ║
+║   GNS3 Simulation                  ML IDS                        ║
+║   (Network Topology) ─────────────(Random Forest + Naive Bayes) ║
+║          │                                                       ║
+║          │ Cloud Interface (Host Bridge)                         ║
+║          │                                                       ║
+║  ╔═══════╪══════════════════════╗  ╔═══════════════════════════╗ ║
+║  ║       │    UBUNTU VM         ║  ║        KALI LINUX VM      ║ ║
+║  ║       │                      ║  ║                           ║ ║
+║  ║  ┌────┴──────────┐           ║  ║  ┌─────────────────────┐  ║ ║
+║  ║  │ Rule-Based AI │           ║  ║  │   Attack Simulation │  ║ ║
+║  ║  └───────────────┘           ║  ║  │  (OSPF Flood,       │  ║ ║
+║  ║                              ║  ║  │   SYN Flood)        │  ║ ║
+║  ║  ┌───────────────┐           ║  ║  └─────────────────────┘  ║ ║
+║  ║  │ Flask Web App │           ║  ║                           ║ ║
+║  ║  └───────────────┘           ║  ╚═══════════════════════════╝ ║
+║  ║                              ║                               ║
+║  ║  ┌───────────────────────┐   ║                               ║
+║  ║  │  Telemetry Pipeline   │   ║                               ║
+║  ║  │  SNMP  → Telegraf     │   ║                               ║
+║  ║  │  Syslog → Telegraf    │   ║                               ║
+║  ║  │  Telegraf → InfluxDB  │   ║                               ║
+║  ║  └───────────────────────┘   ║                               ║
+║  ╚══════════════════════════════╝                               ║
+╚══════════════════════════════════════════════════════════════════╝
 ```
 
-- **SNMP** polls devices for bandwidth utilization, CPU load, memory usage, and interface errors
-- **Syslog** receives push notifications whenever a configuration change is made on a device, enabling detection of threat-actor modifications
-- **Telegraf** normalizes raw SNMP OIDs and messy Syslog streams into structured data and keeps a port open to receive incoming Syslog messages
-- **InfluxDB** stores all telemetry data, enabling real-time monitoring, filtering, and graphing of network health
-
-> Previous stack (Flask + Prometheus) was replaced due to added complexity, higher resource consumption, and slower AI response times.
+![GNS3 Network Topology](https://raw.githubusercontent.com/toobad000/AI-Assisted-Network-Troubleshooter/main/images/top1.png)
 
 ---
 
-## Graphical User Interface
+## Project Structure
 
-The GUI replaces raw terminal output with a structured dashboard. Beyond manual scans, the system monitors the network continuously and automatically surfaces alerts without any user interaction.
+```
+Capstone_RuleBasedAI/
+├── config_parser.py          # Parses device configs for baseline values
+├── runner.py                 # Main orchestrator
+├── core/
+│   ├── advanced_analytics.py # Cross-device correlation and root cause tracing
+│   ├── certainty_factors.py  # Problem confidence scoring
+│   ├── config_manager.py     # Config save/load/versioning
+│   ├── inference_engine.py   # Symptom-to-diagnosis reasoning
+│   ├── knowledge_base.py     # Rules and learned facts
+│   └── rule_miner.py         # Automatic rule generation from run history
+├── detection/
+│   ├── eigrp_tree.py
+│   ├── interface_tree.py
+│   ├── ospf_tree.py
+│   └── problem_detector.py
+├── history/
+│   ├── configs/              # Stable device config snapshots
+│   ├── knowledge/            # knowledge_base.json
+│   └── runs/                 # Past run logs
+├── resolution/
+│   ├── fix_applier.py        # Telnet-based fix execution
+│   └── fix_recommender.py    # Ranked fix generation
+└── utils/
+    ├── network_utils.py
+    ├── reporter.py
+    └── telnet_utils.py
+```
 
-### Automatic Alerting
+---
 
-In addition to on-demand diagnostic scans, the system detects and alerts on network events in real time. Unauthorized configuration changes, neighbor adjacency drops, and interface state changes automatically trigger alerts to the dashboard. This simulates a realistic threat scenario where an attacker has gained access to the network and is maliciously modifying device configurations. Each alert appears in the dashboard with device, event type, and severity — and clicking any alert directly launches the troubleshooter against the affected device, allowing the issue to be diagnosed and remediated in one step.
+## Environment
 
-### Key Panels
-
-- **Real-Time Progress Log** — live feed of all changes being applied to the network
-- **Active Device Panel** — shows which devices are currently reachable
-- **Live Network Status** — CPU usage, bandwidth, and performance per device
-- **IDS Alert Log** — displays triggered alerts with severity levels
-- **Integrated Troubleshooting** — execute ping, traceroute, or any command directly from the GUI to any device
-- **Config History Browser** — browse past configurations and roll back to any previous state
-- **Telemetry Data Panel** — live view of all telemetry data flowing through the pipeline
+| Component | Purpose |
+|-----------|---------|
+| **GNS3** | Network simulation with real router/switch images |
+| **VMware + Ubuntu VM** | Host environment for running all tooling |
+| **Kali Linux VM** | Attack simulation (OSPF flood, SYN flood) |
+| **Python** | Core language for AI, IDS, and telemetry components |
+| **Wireshark** | Traffic capture for IDS dataset creation |
+| **NFStreamer** | Flow-level feature extraction for Random Forest model |
+| **Scapy** | Packet-level feature extraction for Naive Bayes model |
+| **GitHub** | Version control and collaboration |
 
 ---
 
