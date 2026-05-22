@@ -249,6 +249,7 @@ Capstone_RuleBasedAI/
 
 ## Recommendations for Future Work
 
+- Containerize and Optimize architecture for easier deployment
 - Deploy on physical enterprise hardware for a stable and consistent topology
 - Expand the IDS dataset with additional attack types and more varied traffic profiles
 - Resolve Naive Bayes false positives through threshold tuning or feature refinement
