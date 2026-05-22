@@ -14,7 +14,7 @@ A capstone project combining a rule-based AI diagnostic engine, a machine learni
 - [Telemetry Pipeline](#telemetry-pipeline)
 - [Graphical User Interface](#graphical-user-interface)
 - [Results](#results)
-- [Lessons Learned](#lessons-learned)
+- [Recommendations for Future Work](#recommendations-for-future-work)
 
 ---
 
@@ -44,27 +44,33 @@ The rule engine is designed to **dynamically expand its knowledge base** with ea
 ## System Architecture
 
 ```
- ┌───────────────────────────────────────────────────────┐
- │                    Host Machine                       │
- │                                                       │
- │  ┌─────────────────────┐     ┌─────────────────────┐  │
- │  │      GNS3 Sim       │     │      ML IDS         │  │
- │  │  (Network Topology) │     │    (Random Forest   │  │
- │  └─────────┬───────────┘     │     + Naive Bayes)  │  │
- │            │ Cloud Interface  └─────────────────────┘ │
- │            │ (Host Bridge)                            │
- │  ┌─────────┴───────────────────────────────────────┐  │
- │  │                  Ubuntu VM                      │  │
- │  │                                                 │  │
- │  │  ┌──────────────┐   ┌───────────────────────┐   │  │
- │  │  │ Rule-Based AI│   │  Telemetry Pipeline   │   │  │
- │  │  └──────────────┘   │ SNMP → Telegraf →     │   │  │
- │  │                     │ InfluxDB              │   │  │
- │  │  ┌──────────────┐   │ Syslog → Telegraf     │   │  │
- │  │  │ Flask Web App│   └───────────────────────┘   │  │
- │  │  └──────────────┘                               │  │
- │  └─────────────────────────────────────────────────┘  │
- └───────────────────────────────────────────────────────┘
+╔══════════════════════════════════════════════════════════════════╗
+║                          HOST MACHINE                            ║
+║                                                                  ║
+║   GNS3 Simulation                  ML IDS                        ║
+║   (Network Topology) ─────────────(Random Forest + Naive Bayes) ║
+║          │                                                       ║
+║          │ Cloud Interface (Host Bridge)                         ║
+║          │                                                       ║
+║  ╔═══════╪══════════════════════╗  ╔═══════════════════════════╗ ║
+║  ║       │    UBUNTU VM         ║  ║        KALI LINUX VM      ║ ║
+║  ║       │                      ║  ║                           ║ ║
+║  ║  ┌────┴──────────┐           ║  ║  ┌─────────────────────┐  ║ ║
+║  ║  │ Rule-Based AI │           ║  ║  │   Attack Simulation │  ║ ║
+║  ║  └───────────────┘           ║  ║  │  (OSPF Flood,       │  ║ ║
+║  ║                              ║  ║  │   SYN Flood)        │  ║ ║
+║  ║  ┌───────────────┐           ║  ║  └─────────────────────┘  ║ ║
+║  ║  │ Flask Web App │           ║  ║                           ║ ║
+║  ║  └───────────────┘           ║  ╚═══════════════════════════╝ ║
+║  ║                              ║                               ║
+║  ║  ┌───────────────────────┐   ║                               ║
+║  ║  │  Telemetry Pipeline   │   ║                               ║
+║  ║  │  SNMP  → Telegraf     │   ║                               ║
+║  ║  │  Syslog → Telegraf    │   ║                               ║
+║  ║  │  Telegraf → InfluxDB  │   ║                               ║
+║  ║  └───────────────────────┘   ║                               ║
+║  ╚══════════════════════════════╝                               ║
+╚══════════════════════════════════════════════════════════════════╝
 ```
 
 ---
@@ -84,12 +90,61 @@ The rule engine is designed to **dynamically expand its knowledge base** with ea
 
 ### How It Works
 
-1. `runner.py` connects to all devices and initiates a scan
-2. Detection trees (`ospf_tree.py`, `eigrp_tree.py`, `interface_tree.py`) analyze device configs
-3. The inference engine (`inference_engine.py`) applies rules from the knowledge base to diagnose problems
-4. `fix_recommender.py` generates ranked fix recommendations
-5. `fix_applier.py` connects via Telnet and pushes the fixes
-6. The rule miner (`rule_miner.py`) updates the knowledge base from each run's outcome
+#### 1. Discovery and Config Retrieval
+
+On startup, `runner.py` scans the topology for all active routers and opens concurrent Telnet sessions to each one simultaneously. For every device, it retrieves the running configuration alongside targeted `show` commands (`show ip ospf`, `show ip eigrp neighbors`, `show ip interface brief`, etc.). This output is the raw input to the detection pipeline.
+
+#### 2. Detection Trees
+
+The retrieved output is passed through protocol-specific decision trees (`ospf_tree.py`, `eigrp_tree.py`, `interface_tree.py`). These trees check for the full range of general OSPF and EIGRP faults: interfaces that are administratively down when they should be up, neighbor relationships that have dropped, hello/dead timer mismatches, incorrect router IDs, missing or extra network statements, passive interface misconfigurations, stub area conflicts, AS number mismatches, and non-default K-values, among others. Any deviation from expected state is flagged as a detected problem with associated symptom fields extracted from the output.
+
+#### 3. Topology-Aware Fix Selection via the Knowledge Base
+
+Most routing problems are not black and white. A dropped OSPF neighbor could be caused by a timer mismatch, an area ID conflict, a passive interface, a duplicate router ID, or an authentication issue. The correct fix depends entirely on the topology context — whether a stub should exist in that location, which area a given interface belongs to, what the expected router ID is for that device.
+
+To handle this, the system maintains a configuration versioning system (`config_manager.py`) that stores a known-good stable baseline for every device. When a problem is detected, the current configuration is compared against this baseline to extract the expected values and inform the fix.
+
+The knowledge base (`knowledge_base.json`) is a structured set of problem-to-fix rule mappings. Each rule contains the problem type, the IOS commands needed to resolve it, a verification command, a confidence score, a success/attempt history, and optionally a device-specific context tag. For example:
+
+- `OSPF_002` maps a hello interval mismatch to `ip ospf hello-interval` and `ip ospf dead-interval` commands, with a confidence of `0.99` earned over 18 successful applications
+- `CTX_R3_003` is a context-specific variant of the same EIGRP timer fix, scoped to R3, with a `1.0` confidence score backed by 7 successful runs on that specific device
+
+Rules fall into three tiers: base rules (hand-authored), mined rules (auto-generated from run history, prefixed `MINED_`), and context-specific rules (device-scoped, prefixed `CTX_`). IDS security response rules (`IDS_TCP_001`, `IDS_OSPF_001`) are also stored here and trigger interface shutdowns on detected attack traffic.
+
+#### 4. Inference Engine and Fix Ranking
+
+The inference engine (`inference_engine.py`) queries the knowledge base for all candidate rules matching the detected problem type and device. It ranks candidates by confidence score and selects the highest-confidence rule that meets a minimum tier threshold. If no rule clears the threshold, the fallback is a baseline revert — the system proposes restoring the affected device to its last known stable configuration rather than guessing.
+
+Each fix decision produces an explanation trace visible in the GUI, showing the full reasoning path:
+
+```
+PROBLEM DETECTED
+non-default k-values on R3
+
+REASONING PATH
+KB returned 3 candidate rule(s)
+Found 3 similar historical case(s)
+IE selected rule EIGRP_002B (CF=1.000, tier=2)
+Commands baseline-validated and pre-formatted
+
+FIX SELECTED
+EIGRP_002B
+Reset EIGRP metric weights to default | CF: 100% | Tier 2 | Baseline ✓
+
+Alternatives rejected:
+  MINED_EIGRP_001 - Superseded by higher-confidence rule
+  CTX_R3_002     - Superseded by higher-confidence rule
+```
+
+#### 5. Fix Application and Verification
+
+`fix_applier.py` connects to the target device via Telnet and pushes the selected IOS commands. After applying the fix, it runs the rule's verification command (`show ip eigrp neighbors`, `show ip ospf`, etc.) and checks the output against expected state. The result — success or failure, commands used, verification output — is logged to the run history.
+
+#### 6. Post-Run Learning and Rule Mining
+
+After each diagnostic run, every rule that was invoked has its `attempts` and `successes` counters updated, and its confidence score is recalculated accordingly. The rule miner (`rule_miner.py`) then analyzes the run history looking for recurring problem-fix patterns that don't yet have a dedicated rule. When a pattern meets the support and success-rate thresholds, a new rule is automatically created and added to the knowledge base.
+
+Over time, generalized rules gain device-specific context variants. A base rule like "if EIGRP stub present and should not be, remove it" may produce a `CTX_R2_004` variant scoped specifically to R2 with a higher confidence score reflecting its track record on that device. This makes the system progressively faster and more precise without expanding a context window — instead of replaying history each time, the learned context is baked directly into compact, targeted rules that execute in constant time.
 
 ### Project Structure
 
@@ -179,7 +234,13 @@ GNS3 Devices
 
 ## Graphical User Interface
 
-The GUI replaces raw terminal output with a structured dashboard. Key panels:
+The GUI replaces raw terminal output with a structured dashboard. Beyond manual scans, the system monitors the network continuously and automatically surfaces alerts without any user interaction.
+
+### Automatic Alerting
+
+In addition to on-demand diagnostic scans, the system detects and alerts on network events in real time. Unauthorized configuration changes, neighbor adjacency drops, and interface state changes automatically trigger alerts to the dashboard. This simulates a realistic threat scenario where an attacker has gained access to the network and is maliciously modifying device configurations. Each alert appears in the dashboard with device, event type, and severity — and clicking any alert directly launches the troubleshooter against the affected device, allowing the issue to be diagnosed and remediated in one step.
+
+### Key Panels
 
 - **Real-Time Progress Log** — live feed of all changes being applied to the network
 - **Active Device Panel** — shows which devices are currently reachable
@@ -188,13 +249,6 @@ The GUI replaces raw terminal output with a structured dashboard. Key panels:
 - **Integrated Troubleshooting** — execute ping, traceroute, or any command directly from the GUI to any device
 - **Config History Browser** — browse past configurations and roll back to any previous state
 - **Telemetry Data Panel** — live view of all telemetry data flowing through the pipeline
-
-### Implementation Notes
-
-Two major bugs were resolved during GUI development:
-
-1. **Telnet buffer truncation** — a static timer caused the tool to stop reading configs before the full output was received, leading to false positives/negatives. Fixed by switching to prompt-based termination to guarantee 100% data integrity.
-2. **UI thread freezing** — network scans were blocking the main thread. Resolved with a multithreaded architecture that offloads heavy operations to background threads with thread-safe UI updates.
 
 ---
 
