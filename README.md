@@ -87,26 +87,8 @@ Over time, generalized rules gain device-specific context variants. A base rule 
 
 ![Telemetry Dashboard](https://raw.githubusercontent.com/toobad000/AI-Assisted-Network-Troubleshooter/main/images/tele1.png)
 
-### Telemetry Pipeline
-
-```
-GNS3 Devices
-     │
-     ├── SNMP (pull) ──────────────┐
-     │                             ▼
-     └── Syslog (push) ──► Telegraf ──► InfluxDB ──► GUI / AI
-```
-
-- **SNMP** polls devices for bandwidth utilization, CPU load, memory usage, and interface errors
-- **Syslog** receives push notifications whenever a configuration change is made on a device, enabling detection of threat-actor modifications
-- **Telegraf** normalizes raw SNMP OIDs and messy Syslog streams into structured data and keeps a port open to receive incoming Syslog messages
-- **InfluxDB** stores all telemetry data, enabling real-time monitoring, filtering, and graphing of network health
-
-> Previous stack (Flask + Prometheus) was replaced due to added complexity, higher resource consumption, and slower AI response times.
-
-### Graphical User Interface
-
-The GUI replaces raw terminal output with a structured dashboard. Beyond manual scans, the system monitors the network continuously and automatically surfaces alerts without any user interaction.
+### Dashboard 
+A structured dashboard shows live network statistics and alerts. 
 
 In addition to on-demand diagnostic scans, the system detects and alerts on network events in real time. Unauthorized configuration changes, neighbor adjacency drops, and interface state changes automatically trigger alerts to the dashboard. This simulates a realistic threat scenario where an attacker has gained access to the network and is maliciously modifying device configurations. Each alert appears in the dashboard with device, event type, and severity, and clicking any alert directly launches the troubleshooter against the affected device, allowing the issue to be diagnosed and remediated in one step.
 
@@ -120,7 +102,18 @@ In addition to on-demand diagnostic scans, the system detects and alerts on netw
 - **Config History Browser** - browse past configurations and roll back to any previous state
 - **Telemetry Data Panel** - live view of all telemetry data flowing through the pipeline
 
-Two major bugs were resolved during GUI development. A Telnet buffer truncation issue caused by a static read timer was fixed by switching to prompt-based termination, guaranteeing 100% config data integrity. UI thread freezing during network scans was resolved with a multithreaded architecture that offloads heavy operations to background threads with thread-safe UI updates.
+**SNMP** polls devices for bandwidth utilization, CPU load, memory usage, and interface errors  
+**Syslog** receives push notifications whenever a configuration change is made on a device, enabling detection of threat-actor modifications  
+**Telegraf** normalizes raw SNMP OIDs and Syslog streams into structured data and keeps a port open to receive incoming Syslog messages  
+**InfluxDB** stores all telemetry data, enabling real-time monitoring, filtering, and graphing of network health  
+```
+GNS3 Devices
+     │
+     ├── SNMP (pull) ──────────────┐
+     │                             ▼
+     └── Syslog (push) ──► Telegraf ──► InfluxDB ──► GUI / AI
+```
+> Previous stack (Flask + Prometheus) was replaced due to added complexity, higher resource consumption, and slower AI response times.
 
 ---
 
